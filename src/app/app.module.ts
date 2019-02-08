@@ -19,8 +19,9 @@ import { registroPage } from '../pages/registro/registro';
 import { HttpModule } from '@angular/http';
 import { HTTP } from '@ionic-native/http/ngx';
 import { Perfil } from '../pages/Login/Perfil';
-import { retosComp } from '../pages/retos/retosComp'
-import { GoogleMap, GoogleMaps, GoogleMapsEvent } from '@ionic-native/google-maps';
+import { retosComp } from '../pages/retos/retosComp';
+import { GoogleMap, GoogleMaps } from '@ionic-native/google-maps';
+import { Geolocation } from '@ionic-native/geolocation';
 
 
 @NgModule({
@@ -60,6 +61,7 @@ import { GoogleMap, GoogleMaps, GoogleMapsEvent } from '@ionic-native/google-map
     retosComp,
     SplashScreen,
     Perfil, 
+    Geolocation,
     GoogleMaps,
     {provide: ErrorHandler, useClass: IonicErrorHandler},
     NativePageTransitions,

@@ -7,6 +7,15 @@
 </ion-header>
 
 <ion-content padding>
-  <p>Texto para ver el slider moviendose!</p>
+    <button ion-button (click)="startTracking()" *ngIf="!isTracking">
+        <ion-icon name="locate"></ion-icon>
+        Start
+    </button>
+
+  <button ion-button (click)="stopTracking()" *ngIf="!isTracking">
+    <ion-icon name="locate"></ion-icon>
+    Stop
+  </button>
+  <!-- <p>Texto para ver el slider moviendose!</p> -->
   <div #map id="map" style="height:100%"></div>
 </ion-content>
