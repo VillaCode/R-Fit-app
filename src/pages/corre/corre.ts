@@ -37,7 +37,7 @@ export class CorreTab implements OnInit {
         'API_KEY_FOR_BROWSER_RELEASE': 'AIzaSyADpe3tsTbjXVhsnGiu2TKzxqA1XH185to',
         'API_KEY_FOR_BROWSER_DEBUG': 'AIzaSyADpe3tsTbjXVhsnGiu2TKzxqA1XH185to'
       });
-      console.log("---------------hola------------\n\n\n");
+      // console.log("---------------hola------------\n\n\n");
       this.geolocation.getCurrentPosition(options).then((resp) => {
         // const location = new google.maps.LatLng(resp.coords.latitude, resp.coords.longitude);
         let mapOptions: GoogleMapOptions = {
@@ -50,6 +50,13 @@ export class CorreTab implements OnInit {
           }
         };
         this.map = GoogleMaps.create('map', mapOptions);
+        // this.map = new google.maps.Map('map',mapOptions);
+        let uno = new google.maps.LatLng(23, 21);
+        console.log("------------" + uno + "---------\n\n")
+        let dos = new google.maps.LatLng(1, 12);
+        let pathtmp = {
+          uno, dos
+        }
         runPath = new google.maps.Polyline({
           path: pathLocal,
           geodesic: true,
@@ -120,7 +127,7 @@ export class CorreTab implements OnInit {
         json
       }
     })
-      .then(data => console.log("Se envío" + { data }))
+      .then(data => console.log("Se envío" + JSON.stringify(data)))
       .catch(err => console.log("--------------------------------" + err));
   }
 
