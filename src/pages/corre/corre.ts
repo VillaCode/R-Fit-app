@@ -1,26 +1,27 @@
 import { Component } from '@angular/core';
 import { NavController } from 'ionic-angular';
-import { GoogleMaps, GoogleMap, GoogleMapsEvent, GoogleMapOptions, Environment } from '@ionic-native/google-maps';
+import { GoogleMaps, GoogleMap, GoogleMapsEvent, GoogleMapOptions, Environment, ILatLng } from '@ionic-native/google-maps';
 import { Geolocation } from '@ionic-native/geolocation';
 import axios from 'axios';
 interface OnInit {
   ngOnInit(): void
 };
 declare var google;
-let pathLocal = [], runPath;
+// let pathLocal = [], runPath;
 let isTracking, startTime, endTime;
 const options = {
   enableHighAccuracy: true, timeout: 30000,
 };
-
+//NO CRASHEES PLS
 @Component({
   selector: 'page-corre',
   templateUrl: 'corre.html'
 })
 export class CorreTab implements OnInit {
+  pathLocal: ILatLng[];
   isTracking: boolean;
   map: GoogleMap;
-  mapElement: HTMLElement;
+  // mapElement: HTMLElement;
   constructor(public navCtrl: NavController, public googleMaps: GoogleMaps, public geolocation: Geolocation) {
 
   }
@@ -33,6 +34,7 @@ export class CorreTab implements OnInit {
 
 
     try {
+      this.pathLocal = [];
       Environment.setEnv({
         'API_KEY_FOR_BROWSER_RELEASE': 'AIzaSyADpe3tsTbjXVhsnGiu2TKzxqA1XH185to',
         'API_KEY_FOR_BROWSER_DEBUG': 'AIzaSyADpe3tsTbjXVhsnGiu2TKzxqA1XH185to'
@@ -50,21 +52,18 @@ export class CorreTab implements OnInit {
           }
         };
         this.map = GoogleMaps.create('map', mapOptions);
-        // this.map = new google.maps.Map('map',mapOptions);
-        let uno = new google.maps.LatLng(23, 21);
-        console.log("------------" + uno + "---------\n\n")
-        let dos = new google.maps.LatLng(1, 12);
-        let pathtmp = {
-          uno, dos
-        }
-        runPath = new google.maps.Polyline({
-          path: pathLocal,
-          geodesic: true,
-          strokeColor: '#7093db',
-          strokeOpacity: 1.0,
-          strokeWeight: 15
-        });
-        runPath.setMap(this.map);
+        // let HND_AIR_PORT: ILatLng = { lat: 35.548852, lng: 139.784086 };
+        // let SFO_AIR_PORT: ILatLng = { lat: 37.615223, lng: -122.389979 };
+        // this.pathLocal.push(HND_AIR_PORT);
+        // this.pathLocal.push(SFO_AIR_PORT);
+        // let polylineOptions = {
+        //   points: this.pathLocal,
+        //   // points: AIR_PORTS
+        // }
+        // this.map.addPolyline(polylineOptions).then((polyline)=>{
+
+        //    console.log(polyline.getPoints());
+        // });
       }).catch((error) => {
         console.log('Error getting location', error);
       });
@@ -104,11 +103,11 @@ export class CorreTab implements OnInit {
     let timeDiff = endTime - startTime;
     timeDiff /= 1000;
     let seconds = Math.round(timeDiff);
-    for (let i = 0; i < pathLocal.length - 1; i++) {
-      console.log(this.getDistanceFromLatLonInKm(pathLocal[i].coords.latitude, pathLocal[i].coords.longitude, pathLocal[i + 1]
-        .coords.latitude, pathLocal[i + 1].coords.longitude));
-      distanciaTotal += this.getDistanceFromLatLonInKm(pathLocal[i].coords.latitude, pathLocal[i].coords.longitude, pathLocal[
-        i + 1].coords.latitude, pathLocal[i + 1].coords.longitude)
+    for (let i = 0; i < this.pathLocal.length - 1; i++) {
+      console.log(this.getDistanceFromLatLonInKm(this.pathLocal[i].lat, this.pathLocal[i].lng, this.pathLocal[i + 1]
+        .lat, this.pathLocal[i + 1].lng));
+      distanciaTotal += this.getDistanceFromLatLonInKm(this.pathLocal[i].lat, this.pathLocal[i].lng, this.pathLocal[
+        i + 1].lat, this.pathLocal[i + 1].lng)
     }
     //console.log(distanciaTotal,seconds);
     const Url = 'https://thawing-mountain-76893.herokuapp.com/profile/recibirDistancia';
@@ -128,13 +127,27 @@ export class CorreTab implements OnInit {
       }
     })
       .then(data => console.log("Se envío" + JSON.stringify(data)))
-      .catch(err => console.log("--------------------------------" + err));
+      .catch(err => console.log("--------------------------------\n" + err + "\n-----------------"));
   }
 
   storePosition(position) {
     if (position.coords.accuracy < 80) {
-      pathLocal.push(position);
-      runPath.getPath().push(new google.maps.LatLng(position.coords.latitude, position.coords.longitude));
+      let latlng: ILatLng;
+      latlng = {
+        lat: position.coords.latitude,
+        lng: position.coords.longitude
+      }
+      this.pathLocal.push(latlng);
+      if (this.pathLocal.length > 1) {
+        let polylineOptions = {
+          points: this.pathLocal,
+        }
+        this.map.addPolyline(polylineOptions).then((polyline) => {
+          console.log("---------SE AÑADIO UN PUNTO---------");
+        });
+      }
+
+      // runPath.getPath().push(new google.maps.LatLng(position.coords.latitude, position.coords.longitude));
     }
     console.log(position.coords.accuracy);
   }
